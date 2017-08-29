@@ -96,3 +96,7 @@ ENV/
 
 # local project folder
 localtest/
+
+
+# pycharm
+.idea/

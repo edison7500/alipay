@@ -32,7 +32,11 @@ class BaseAliPay():
         if not self._app_private_key:
             with open(self._app_private_key_path) as fp:
                 self._app_private_key = RSA.importKey(fp.read())
-
+        else:
+            head = "-----BEGIN RSA PRIVATE KEY-----\n"
+            tail = "\n-----END RSA PRIVATE KEY-----"
+            self._app_private_key = head + self._app_private_key + tail
+            self._app_private_key = RSA.importKey(self._app_private_key)
         return self._app_private_key
 
     @property
@@ -43,11 +47,15 @@ class BaseAliPay():
         if not self._alipay_public_key:
             with open(self._alipay_public_key_path) as fp:
                 self._alipay_public_key = RSA.importKey(fp.read())
+        else:
+            head = "-----BEGIN PUBLIC KEY-----\n"
+            tail = "\n-----END PUBLIC KEY-----"
+            self._alipay_public_key = head + self._alipay_public_key + tail
+            self._alipay_public_key = RSA.importKey(self._alipay_public_key)
 
         return self._alipay_public_key
 
-    def __init__(self, appid, app_notify_url, app_private_key_path,
-                 alipay_public_key_path, sign_type="RSA2", debug=False):
+    def __init__(self, appid, app_notify_url, sign_type="RSA2", debug=False, **kwargs):
         """
         初始化:
         alipay = AliPay(
@@ -60,11 +68,11 @@ class BaseAliPay():
         """
         self._appid = appid
         self._app_notify_url = app_notify_url
-        self._app_private_key_path = app_private_key_path
-        self._alipay_public_key_path = alipay_public_key_path
+        self._app_private_key_path = kwargs.pop('app_private_key_path', None)
+        self._alipay_public_key_path = kwargs.pop('alipay_public_key_path', None)
 
-        self._app_private_key = None
-        self._alipay_public_key = None
+        self._app_private_key = kwargs.pop('app_private_key', None)
+        self._alipay_public_key = kwargs.pop('alipay_public_key', None)
         if sign_type not in ("RSA", "RSA2"):
             raise AliPayException(None, "Unsupported sign type {}".format(sign_type))
         self._sign_type = sign_type
