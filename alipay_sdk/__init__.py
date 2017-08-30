@@ -5,6 +5,9 @@
     ~~~~~~~~~~
 
 """
+__version__ = '1.3.0'
+
+
 import json
 from datetime import datetime
 from Crypto.Signature import PKCS1_v1_5
@@ -73,6 +76,7 @@ class BaseAliPay():
 
         self._app_private_key = kwargs.pop('app_private_key', None)
         self._alipay_public_key = kwargs.pop('alipay_public_key', None)
+
         if sign_type not in ("RSA", "RSA2"):
             raise AliPayException(None, "Unsupported sign type {}".format(sign_type))
         self._sign_type = sign_type
@@ -247,7 +251,8 @@ class BaseAliPay():
             return_url=return_url,
             notify_url=notify_url
         )
-        return self.sign_data(data)
+        _url = self._gateway + "?" + self.sign_data(data)
+        return _url
 
     def api_alipay_trade_query(self, out_trade_no=None, trade_no=None):
         """
@@ -536,17 +541,15 @@ class AliPay(BaseAliPay):
 
 class ISVAliPay(BaseAliPay):
 
-    def __init__(self, appid, app_notify_url, app_private_key_path,
-                 alipay_public_key_path, sign_type="RSA2", debug=False,
-                 app_auth_token=None, app_auth_code=None):
+    def __init__(self, appid, app_notify_url, sign_type="RSA2", debug=False,
+                 app_auth_token=None, app_auth_code=None, **kwargs):
         if not app_auth_token and not app_auth_code:
             raise Exception("Both app_auth_code and app_auth_token are None !!!")
 
         self._app_auth_token = app_auth_token
         self._app_auth_code = app_auth_code
         super(ISVAliPay, self).__init__(
-            appid, app_notify_url, app_private_key_path,
-            alipay_public_key_path, sign_type, debug
+            appid, app_notify_url, sign_type, debug, **kwargs
         )
 
     @property

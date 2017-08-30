@@ -9,8 +9,8 @@ import unittest
 import json
 import subprocess
 
-from alipay import AliPay
-from alipay.exceptions import AliPayValidationError
+from alipay_sdk import AliPay
+from alipay_sdk.exceptions import AliPayValidationError
 from tests import helper
 from tests.compat import mock
 

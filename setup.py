@@ -5,7 +5,8 @@
     ~~~~~~~~~~
 
 """
-from setuptools import setup
+from setuptools import setup, find_packages
+import alipay_sdk
 import unittest
 
 
@@ -17,14 +18,16 @@ def alipay_test_suite():
 
 setup(
     name="python-alipay-sdk",
-    version="1.3.0",
+    version=alipay_sdk.__version__,
+    # version="1.3.0",
     author="fzlee",
     author_email="fzleee@gmail.com",
     description="Python SDK for AliPay, RSA is the only sign method we support",
     license="BSD",
     keywords="python sdk alipay",
     url="https://github.com/fzlee/alipay",
-    packages=['alipay'],
+    packages=find_packages(),
+    # include_package_data=True,
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
